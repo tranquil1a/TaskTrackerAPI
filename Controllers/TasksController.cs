@@ -18,7 +18,6 @@ public class TasksController : ControllerBase
         _logger = logger;
     }
 
-    // GET /api/tasks — retrieve all tasks
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -39,7 +38,6 @@ public class TasksController : ControllerBase
         }));
     }
 
-    // POST /api/tasks/bug — create a new bug report
     [HttpPost("bug")]
     public IActionResult CreateBug([FromBody] CreateBugReportDto dto)
     {
@@ -59,7 +57,6 @@ public class TasksController : ControllerBase
         });
     }
 
-    // POST /api/tasks/feature — create a new feature request
     [HttpPost("feature")]
     public IActionResult CreateFeature([FromBody] CreateFeatureRequestDto dto)
     {
@@ -79,7 +76,6 @@ public class TasksController : ControllerBase
         });
     }
 
-    // PUT /api/tasks/{id}/complete — complete a task (triggers event)
     [HttpPut("{id:guid}/complete")]
     public IActionResult CompleteTask(Guid id)
     {
@@ -87,14 +83,12 @@ public class TasksController : ControllerBase
         if (task is null)
             return NotFound(new { message = $"Task {id} not found." });
 
-        // Subscribe to event before completing
         task.OnTaskCompleted += OnTaskCompleted;
         task.CompleteTask();
 
         return Ok(new { message = $"Task '{task.Title}' marked as complete." });
     }
 
-    // GET /api/tasks/stats — bonus: LINQ stats via TaskFilterService
     [HttpGet("stats")]
     public IActionResult GetStats()
     {
@@ -114,8 +108,6 @@ public class TasksController : ControllerBase
 
     private void OnTaskCompleted(BaseTask task)
     {
-        // In the future, this is where NotificationService would be called.
-        // See INTEGRATION_NOTES.md for the chosen pattern (async via RabbitMQ).
         _logger.LogInformation("Task completed event fired: [{Id}] {Title} at {Time}",
             task.Id, task.Title, DateTime.UtcNow);
     }
