@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  tasktracker-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tasktracker-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: unless-stopped
